@@ -58,7 +58,7 @@ fn main() -> anyhow::Result<()> {
                 manager.get_powerups()
             );
 
-            match manager.is_locked() {
+            match manager.powerups_locked() {
                 true => {
                     println!("Muted unlocked");
                 }

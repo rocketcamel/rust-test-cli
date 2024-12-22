@@ -3,7 +3,7 @@ use std::sync::Mutex;
 pub trait Powerup {
     fn activate_powerup(&self, powerup_name: &str);
     fn get_powerups(&self) -> Vec<String>;
-    fn is_locked(&self) -> bool;
+    fn powerups_locked(&self) -> bool;
 }
 
 pub struct PowerupManager {
@@ -30,7 +30,7 @@ impl Powerup for PowerupManager {
         powerups.clone()
     }
 
-    fn is_locked(&self) -> bool {
+    fn powerups_locked(&self) -> bool {
         match self.active_powerups.try_lock() {
             Ok(_powerups) => true,
             _ => false,
