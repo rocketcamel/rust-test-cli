@@ -8,6 +8,7 @@ pub enum Commands {
         #[arg(short, long)]
         provider: String,
     },
-
-    Test {},
+    
+    /// Arc and Mutex concurrency
+    Concurrency {}
 }

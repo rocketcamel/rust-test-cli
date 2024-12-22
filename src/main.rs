@@ -50,7 +50,7 @@ fn main() -> anyhow::Result<()> {
             let payment_context = get_context(&parsed_provider);
             payment_context.process_payment();
         }
-        Some(Commands::Test {}) => {
+        Some(Commands::Concurrency {}) => {
             let manager = Arc::new(PowerupManager::new());
             start_events(manager.clone()).context("Failed to start events")?;
             println!(
