@@ -25,7 +25,7 @@ fn get_context(provider: &Provider) -> PaymentContext {
     }
 }
 
-fn start_events(manager: Arc<PowerupManager>) -> anyhow::Result<()> {
+fn start_events(manager: Arc<PowerupManager>) {
     thread::spawn(move || {
         let events = vec!["SpeedBoost", "Cube"];
         for event in events {
@@ -36,8 +36,6 @@ fn start_events(manager: Arc<PowerupManager>) -> anyhow::Result<()> {
     })
     .join()
     .unwrap();
-
-    Ok(())
 }
 
 fn main() -> anyhow::Result<()> {
@@ -52,7 +50,7 @@ fn main() -> anyhow::Result<()> {
         }
         Some(Commands::Concurrency {}) => {
             let manager = Arc::new(PowerupManager::new());
-            start_events(manager.clone()).context("Failed to start events")?;
+            start_events(manager.clone());
             println!(
                 "Completed. Powerups activated: {:?}",
                 manager.get_powerups()
