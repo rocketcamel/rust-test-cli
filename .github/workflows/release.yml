@@ -43,6 +43,11 @@ jobs:
           create-summary: true
           version-file: .github/package.yml
 
+      - run: |
+          ./setVersion.sh ${{ steps.changelog.outputs.version }}
+          git add .
+          git commit --amend --no-edit
+
       - name: Create PR
         if: steps.changelog.outputs.skipped == 'false'
         run: |
