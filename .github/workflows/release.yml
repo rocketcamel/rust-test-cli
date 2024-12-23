@@ -43,7 +43,7 @@ jobs:
           # git-branch: ""
           skip-git-pull: true
           output-file: false
-          # version-file: .github/package.yml
+          version-file: .github/package.yml
           create-summary: true
 
       # - name: Create Changelog PR
