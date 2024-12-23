@@ -47,7 +47,7 @@ jobs:
           ./setVersion.sh ${{ steps.changelog.outputs.version }}
           git add .
           git commit --amend --no-edit
-          git push -f
+          git push origin ${{ env.PR_BRANCH }} -f
 
       - name: Create PR
         if: steps.changelog.outputs.skipped == 'false'
