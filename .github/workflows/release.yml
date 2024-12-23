@@ -44,8 +44,8 @@ jobs:
           version-file: .github/package.yml
 
       - run: |
-          ./setVersion.sh ${{ steps.changelog.outputs.version }}
-          git add .
+          ./setVersion.sh ${{ steps.changelog.outputs.version }} &&
+          git add . &&
           git commit --amend --no-edit
 
       - name: Create PR
