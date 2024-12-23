@@ -53,7 +53,7 @@ jobs:
       - name: Merge PR
         if: steps.changelog.outputs.skipped == 'false'
         run: |
-          gh pr merge --auto -s -d ${{ env.PR_BRANCH }}
+          gh pr merge -s -d ${{ env.PR_BRANCH }}
         env:
           GH_TOKEN: ${{ github.token }}
 
