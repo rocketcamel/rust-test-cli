@@ -36,6 +36,7 @@ jobs:
           skip-git-pull: true
           output-file: false
           create-summary: true
+          version-file: .github/package.yml
 
   release:
     name: Release
