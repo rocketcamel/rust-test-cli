@@ -61,7 +61,10 @@ jobs:
 
       - name: Extract version from package.yml
         id: extract_version
-        run: echo "VERSION=$(grep '^version:' .github/package.yml | awk '{print $2}')" >> $GITHUB_ENV
+        run: |
+          VERSION=$(grep '^version:' .github/package.yml | awk '{print $2}')
+          echo "VERSION=v$VERSION" >> $GITHUB_ENV
+          echo "Extracted version: v$VERSION"
 
       - name: Build release binary
         run: |
