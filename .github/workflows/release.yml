@@ -1,10 +1,9 @@
-name: CI
+name: Release
 
 on:
   push:
     branches:
       - main
-  pull_request:
 
 permissions:
   contents: write
@@ -14,7 +13,6 @@ permissions:
 jobs:
   changelog:
     name: Changelog
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
     outputs:
@@ -48,7 +46,7 @@ jobs:
       - name: Create Changelog PR
         if: steps.changelog.outputs.skipped == 'false'
         run: |
-          gh pr create --base main --head ${{ env.PR_BRANCH }} --title 'chore(release): ${{ steps.changelog.outputs.tag }} [skip-ci]' --body '${{ steps.changelog.outputs.clean_changelog }}'
+          gh pr create --base main --head ${{ env.PR_BRANCH }} --title 'chore(release): ${{ steps.changelog.outputs.tag }}' --body '${{ steps.changelog.outputs.clean_changelog }}'
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -64,12 +62,12 @@ jobs:
         run: |
           gh pr merge -s --auto -d ${{ env.PR_BRANCH }}
         env:
-          GH_TOKEN: ${{ secrets.GH_OWNER_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
 
   release:
     name: Release
     needs: changelog
-    if: github.event_name != 'pull_request' && needs.changelog.outputs.skipped == 'false'
+    if: needs.changelog.outputs.skipped == 'false'
     strategy:
       fail-fast: false
       matrix:
@@ -92,7 +90,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          token: ${{ secrets.GH_OWNER_TOKEN }}
+          token: ${{ github.token }}
           tag_name: ${{ needs.changelog.outputs.tag }}
           prerelease: false
           draft: false
