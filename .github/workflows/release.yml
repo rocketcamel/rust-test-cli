@@ -60,6 +60,7 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Extract version from package.yml
+        shell: bash
         id: extract_version
         run: |
           VERSION=$(grep '^version:' .github/package.yml | awk '{print $2}')
