@@ -76,7 +76,8 @@ jobs:
         include:
           - host: windows
             os: windows-latest
-            target: x86_64-pc-windows-msvc
+          - host: linux
+            os: ubuntu-latest
     runs-on: ${{ matrix.os}}
 
     steps:
@@ -95,7 +96,7 @@ jobs:
           tag_name: ${{ needs.changelog.outputs.tag }}
           prerelease: false
           draft: false
-          files: target/release/rust-testing*
+          files: ${{ matrix.os == 'windows-latest' && 'target/release/rust-testing.exe' || 'target/release/rust-testing' }}
           generate_release_notes: true
           name: ${{ needs.changelog.outputs.tag }}
           body: |
