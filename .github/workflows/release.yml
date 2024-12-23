@@ -83,12 +83,6 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Get the latest tag
-        run: |
-          TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo "TAG=$TAG" >> $GITHUB_ENV
-          echo "Latest tag: $TAG"
-
       - name: Build release binary
         run: |
           cargo build -r
@@ -97,12 +91,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ github.token }}
-          tag_name: ${{ env.TAG }}
+          tag_name: ${{ needs.changelog.outputs.tag }}
           prerelease: false
           draft: false
           files: ${{ matrix.os == 'windows-latest' && 'target/release/rust-testing.exe' || 'target/release/rust-testing' }}
           generate_release_notes: true
-          name: ${{ env.TAG }}
+          name: ${{ needs.changelog.outputs.tag }}
           body: |
             <details>
               ${{ needs.changelog.outputs.clean_changelog }}
