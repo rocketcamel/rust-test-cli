@@ -21,6 +21,9 @@ jobs:
             os: ubuntu-latest
     runs-on: ${{ matrix.os}}
 
+    env:
+      BIN: rust-testing
+
     steps:
       - uses: actions/checkout@v4
 
@@ -30,11 +33,28 @@ jobs:
         run: |
           cargo build -r
 
+      - name: Get Project Version
+        shell: bash
+        run: |
+          echo "PROJECT_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+          echo "Version: ${{ env.PROJECT_VERSION }}"
+
+      - name: Prepare Files
+        shell: bash
+        run: |
+          find target/release -type f ! -name '${{ env.BIN }}*' -delete
+          find target/release -type d -empty -delete
+
+          if [ "${{ matrix.host }}" = "windows" ]; then
+            mv target/release/${{ env.BIN }}.exe target/release/rust-cli-${{ env.PROJECT_VERSION }}-windows-x86_64.exe
+          elif [ "${{ matrix.host }}" = "linux" ]; then
+            mv target/release/${{ env.BIN }} target/release/rust-cli-${{ env.PROJECT_VERSION }}-linux-x86_64
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ github.token }}
           tag_name: ${{ github.ref_name }}
-          files: ${{ matrix.os == 'windows-latest' && 'target/release/rust-testing.exe' || 'target/release/rust-testing' }}
+          files: target/release*
           generate_release_notes: true
           name: ${{ github.ref_name }}
