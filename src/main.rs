@@ -2,7 +2,6 @@ mod commands;
 mod payment;
 mod powerup;
 mod services;
-mod middleware;
 
 use std::{sync::Arc, thread, time::Duration};
 
