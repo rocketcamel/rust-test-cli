@@ -5,7 +5,7 @@ mod services;
 
 use std::{sync::Arc, thread, time::Duration};
 
-use actix_web::{App, HttpServer};
+use actix_web::{middleware::Logger, App, HttpServer};
 
 use anyhow::Context;
 
@@ -49,7 +49,10 @@ async fn main() -> anyhow::Result<()> {
 
     let log_env = env_logger::Env::default().default_filter_or("info");
 
-    env_logger::Builder::from_env(log_env).format_module_path(false).format_timestamp(None).init();
+    env_logger::Builder::from_env(log_env)
+        .format_module_path(false)
+        .format_timestamp(None)
+        .init();
 
     match &cli.command {
         Some(Commands::Pay { provider }) => {
@@ -75,7 +78,7 @@ async fn main() -> anyhow::Result<()> {
         }
         Some(Commands::Serve {}) => {
             log::info!("Starting HTTP Server");
-            let _ = HttpServer::new(|| App::new().service(hello))
+            let _ = HttpServer::new(|| App::new().wrap(Logger::default()).service(hello))
                 .bind(("127.0.0.1", 3000))?
                 .run()
                 .await;
