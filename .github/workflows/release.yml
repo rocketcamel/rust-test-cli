@@ -2,71 +2,15 @@ name: Release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*"
 
 permissions:
   contents: write
-  packages: write
-  pull-requests: write
 
 jobs:
-  changelog:
-    name: Changelog
-    runs-on: ubuntu-latest
-
-    outputs:
-      skipped: ${{ steps.changelog.outputs.skipped }}
-      tag: ${{ steps.changelog.outputs.tag }}
-      clean_changelog: ${{ steps.changelog.outputs.clean_changelog }}
-      version: ${{ steps.changelog.outputs.version }}
-
-    env:
-      PR_BRANCH: release-ci-${{ github.sha }}
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Create Branch
-        run: |
-          git checkout -b ${{ env.PR_BRANCH }}
-
-      - name: Create Changelog
-        uses: TriPSs/conventional-changelog-action@v6
-        id: changelog
-        with:
-          github-token: ${{ github.token }}
-          git-user-name: "github-actions[bot]"
-          git-user-email: "github-actions[bot]@users.noreply.github.com"
-          git-branch: ${{ env.PR_BRANCH }}
-          skip-git-pull: true
-          output-file: false
-          create-summary: true
-          version-file: .github/package.yml
-
-      - run: |
-          ./setVersion.sh ${{ steps.changelog.outputs.version }}
-          git add .
-          git commit --amend --no-edit
-          git push origin ${{ env.PR_BRANCH }} -f
-
-      - name: Create PR
-        if: steps.changelog.outputs.skipped == 'false'
-        run: |
-          gh pr create --base main --head ${{ env.PR_BRANCH }} --title 'chore(release): ${{ steps.changelog.outputs.tag }} [skip-ci]' --body '${{ steps.changelog.outputs.clean_changelog }}'
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Merge PR
-        if: steps.changelog.outputs.skipped == 'false'
-        run: |
-          gh pr merge -s -d ${{ env.PR_BRANCH }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-
   release:
     name: Release
-    needs: changelog
-    if: needs.changelog.outputs.skipped == 'false'
     strategy:
       fail-fast: false
       matrix:
@@ -90,13 +34,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ github.token }}
-          tag_name: ${{ needs.changelog.outputs.tag }}
-          prerelease: false
-          draft: false
+          tag_name: ${{ github.ref_name }}
           files: ${{ matrix.os == 'windows-latest' && 'target/release/rust-testing.exe' || 'target/release/rust-testing' }}
           generate_release_notes: true
-          name: ${{ needs.changelog.outputs.tag }}
-          body: |
-            <details>
-              ${{ needs.changelog.outputs.clean_changelog }}
-            </details>
+          name: ${{ github.ref_name }}
