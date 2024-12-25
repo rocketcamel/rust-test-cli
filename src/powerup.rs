@@ -22,7 +22,7 @@ impl Powerup for PowerupManager {
     fn activate_powerup(&self, powerup_name: &str) {
         let mut powerups = self.active_powerups.lock().unwrap();
         powerups.push(powerup_name.to_string());
-        println!("Activated powerup {}", powerup_name);
+        log::info!("Activated powerup {}", powerup_name);
     }
 
     fn get_powerups(&self) -> Vec<String> {

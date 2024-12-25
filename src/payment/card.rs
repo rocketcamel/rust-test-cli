@@ -6,6 +6,6 @@ pub struct Card {
 
 impl Payment for Card {
     fn pay(&self) {
-        println!("Paying with card! number: {}", self.number)
+        log::info!("Paying with card! number: {}", self.number)
     }
 }
