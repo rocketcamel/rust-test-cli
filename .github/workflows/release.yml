@@ -36,7 +36,8 @@ jobs:
       - name: Get Project Version
         shell: bash
         run: |
-          echo "PROJECT_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+          PROJECT_VERSION=$(echo "${GITHUB_REF#refs/tags/}" | sed 's/^v//')
+          echo "PROJECT_VERSION=$PROJECT_VERSION" >> $GITHUB_ENV
           echo "Version: ${{ env.PROJECT_VERSION }}"
 
       - name: Prepare Files
@@ -49,6 +50,7 @@ jobs:
             mv target/release/${{ env.BIN }}.exe target/release/rust-cli-${{ env.PROJECT_VERSION }}-windows-x86_64.exe
           elif [ "${{ matrix.host }}" = "linux" ]; then
             mv target/release/${{ env.BIN }} target/release/rust-cli-${{ env.PROJECT_VERSION }}-linux-x86_64
+          fi
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
