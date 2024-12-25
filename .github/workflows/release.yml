@@ -52,11 +52,14 @@ jobs:
             mv target/release/${{ env.BIN }} target/release/rust-cli-${{ env.PROJECT_VERSION }}-linux-x86_64
           fi
 
+          echo "Contents of target/release:"
+          ls -l target/release
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ github.token }}
           tag_name: ${{ github.ref_name }}
-          files: target/release*
+          files: target/release/*
           generate_release_notes: true
           name: ${{ github.ref_name }}
