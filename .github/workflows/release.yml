@@ -52,6 +52,8 @@ jobs:
             mv target/release/${{ env.BIN }} target/release/rust-cli-${{ env.PROJECT_VERSION }}-linux-x86_64
           fi
 
+          rm target/release/${{ env.BIN }}.d
+
           echo "Contents of target/release:"
           ls -l target/release
 
