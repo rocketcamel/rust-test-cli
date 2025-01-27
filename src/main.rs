@@ -75,6 +75,8 @@ async fn main() -> anyhow::Result<()> {
                 }
                 _ => log::warn!("Mutex locked"),
             };
+
+            log::info!("Recent powerups: {:?}", manager.get_recent())
         }
         Some(Commands::Serve {}) => {
             log::info!("Starting HTTP Server");
